@@ -50,7 +50,7 @@ export const authMiddleware = createMiddleware<{ Bindings: Env }>(async (c, next
     try {
       const secret = env.JWT_SECRET;
       if (!secret) {
-        return fail(c, 'Server configuration error: JWT_SECRET is required.', 500);
+        return fail(c, 'жЬНеК°еЩ®йЕНзљЃйФЩиѓѓпЉЪJWT_SECRET жЬ™иЃЊзљЃпЉМиѓЈдљњзФ® openssl rand -hex 32 зФЯжИРеєґйЕНзљЃгАВ', 500);
       }
       await verifyJWT(authCookie, secret);
       await next();

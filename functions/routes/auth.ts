@@ -45,7 +45,7 @@ authRoutes.post(
       .join("; ");
 
     c.header('Set-Cookie', cookie);
-    return ok(c, { token }, 'Login successful', 200);
+    return ok(c, { token }, '登录成功', 200);
   }
 );
 
@@ -63,5 +63,5 @@ authRoutes.post('/logout', (c) => {
       .join("; ");
   
   c.header('Set-Cookie', cookie);
-  return ok(c, null, 'Logout successful', 200);
+  return ok(c, null, '登出成功', 200);
 });
