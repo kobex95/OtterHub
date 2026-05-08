@@ -8,7 +8,7 @@ enabled = true
 # KV Namespace 绑定（必填）
 [[kv_namespaces]]
 binding = "oh_file_url"
-id = "your-kv-namespace-id"  # 在 Cloudflare Dashboard → Workers & Pages → KV 中创建后获取 ID
+id = "eb6e07673218497586209b4428d06ca9"  # 在 Cloudflare Dashboard → Workers & Pages → KV 中创建后获取 ID
 
 # R2 Bucket 绑定（可选，生产环境使用 Telegram 存储时可省略）
 # [[r2_buckets]]
