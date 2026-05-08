@@ -45,7 +45,13 @@ function LoginContent() {
   const onSubmit = async (values: LoginFormValues) => {
     setLoading(true);
     try {
-      await login(values.password);
+      const result = await login(values.password);
+      if (!result.success || !result.token) {
+        toast.error("登录失败，请检查密码");
+        return;
+      }
+      // 存储 token 到 localStorage
+      localStorage.setItem("auth_token", result.token);
       toast.success("登录成功");
       const redirectUrl = getRedirectUrl();
       router.push(redirectUrl);

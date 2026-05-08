@@ -19,32 +19,46 @@ export const authMiddleware = createMiddleware<{ Bindings: Env }>(async (c, next
 
   const env = c.env;
 
-  // 1. 优先检查 API Token (Authorization Header)
+  // 1. 检查 Authorization Header（API Token 或 JWT）
   const authHeader = c.req.header('Authorization');
-  if (authHeader && env.API_TOKEN) {
-    const token = authHeader.replace(/Bearer\s+/i, '');
-    if (token === env.API_TOKEN) {
+  if (authHeader) {
+    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+
+    // 1a. API Token 精确匹配
+    if (env.API_TOKEN && token === env.API_TOKEN) {
       await next();
       return;
     }
+
+    // 1b. JWT Token 验证（兜底方案，绕过 Cookie 问题）
+    if (env.JWT_SECRET) {
+      try {
+        await verifyJWT(token, env.JWT_SECRET);
+        await next();
+        return;
+      } catch (_) {
+        // JWT 验证失败，继续尝试 Cookie
+      }
+    }
   }
 
-  // 2. 检查 Cookie
+  // 2. Cookie 兜底
   const cookie = c.req.header('Cookie');
   const authCookie = cookie?.match(/(?:^|;\s*)auth=([^;]+)/)?.[1];
 
-  if (!authCookie) {
-    return fail(c, `Unauthorized, cookie: ${cookie}`, 401);
+  if (authCookie) {
+    try {
+      const secret = env.JWT_SECRET;
+      if (!secret) {
+        return fail(c, 'Server configuration error: JWT_SECRET is required.', 500);
+      }
+      await verifyJWT(authCookie, secret);
+      await next();
+      return;
+    } catch (_) {
+      // Cookie JWT 验证失败
+    }
   }
 
-  try {
-    const secret = env.JWT_SECRET;
-    if (!secret) {
-      return fail(c, 'Server configuration error: JWT_SECRET is required. Generate one with: openssl rand -hex 32', 500);
-    }
-    await verifyJWT(authCookie, secret);
-    await next();
-  } catch (e) {
-    return fail(c, 'Unauthorized', 401);
-  }
+  return fail(c, 'Unauthorized', 401);
 });

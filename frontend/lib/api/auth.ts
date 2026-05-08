@@ -1,19 +1,19 @@
 import { client } from "./client";
 
 /**
- * 登录
+ * 登录，返回 token
  */
-export async function login(password: string): Promise<boolean> {
+export async function login(password: string): Promise<{ success: boolean; token?: string }> {
   const res = await client.auth.login.$post({
     json: { password },
   });
 
   if (!res.ok) {
-    return false;
+    return { success: false };
   }
 
   const data = await res.json();
-  return data.success;
+  return { success: data.success, token: data.data?.token };
 }
 
 /**
