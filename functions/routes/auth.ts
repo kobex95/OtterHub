@@ -30,7 +30,8 @@ authRoutes.post(
     }
     const token = await signJWT(secret);
 
-    const isSecure = c.req.url.startsWith("https");
+    // Cloudflare Workers 内部 URL 可能是 http，需额外检查 X-Forwarded-Proto
+    const isSecure = c.req.url.startsWith("https") || c.req.header("X-Forwarded-Proto") === "https";
     // Set Cookie
     const cookie = [
       `auth=${token}`,
@@ -49,7 +50,7 @@ authRoutes.post(
 );
 
 authRoutes.post('/logout', (c) => {
-    const isSecure = c.req.url.startsWith("https");
+    const isSecure = c.req.url.startsWith("https") || c.req.header("X-Forwarded-Proto") === "https";
     const cookie = [
       "auth=",
       "Path=/",
@@ -64,4 +65,3 @@ authRoutes.post('/logout', (c) => {
   c.header('Set-Cookie', cookie);
   return ok(c, null, 'Logout successful', 200);
 });
-
