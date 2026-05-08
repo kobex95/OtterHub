@@ -24,9 +24,9 @@ authRoutes.post(
       return fail(c, 'Unauthorized', 401);
     }
 
-    const secret = env.JWT_SECRET || env.PASSWORD;
+    const secret = env.JWT_SECRET;
     if (!secret) {
-      return fail(c, 'Server configuration error: missing JWT_SECRET or PASSWORD', 500);
+      return fail(c, 'Server configuration error: JWT_SECRET is required. Generate one with: openssl rand -hex 32', 500);
     }
     const token = await signJWT(secret);
 
