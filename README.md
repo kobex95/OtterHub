@@ -57,7 +57,7 @@ OtterHub 是一个 **为个人使用场景定制** 的私人云盘方案：
 
 ```bash
 # 克隆项目
-git clone https://github.com/<your-username>/otterhub.git && cd otterhub
+git clone https://github.com/kobex95/OtterHub.git && cd otterhub
 
 # 安装所有 Workspaces 依赖
 npm install
